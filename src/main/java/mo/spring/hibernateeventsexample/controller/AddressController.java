@@ -1,0 +1,64 @@
+package mo.spring.hibernateeventsexample.controller;
+
+import mo.spring.hibernateeventsexample.exception.ResourceNotFoundException;
+import mo.spring.hibernateeventsexample.model.Address;
+import mo.spring.hibernateeventsexample.repository.AddressRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1")
+public class AddressController {
+    private final AddressRepository addressRepository;
+
+    @Autowired
+    public AddressController(AddressRepository addressRepository) {
+        this.addressRepository = addressRepository;
+    }
+
+    @GetMapping("/addresses")
+    public List<Address> getAllAddresses() {
+        return addressRepository.findAll();
+    }
+
+    @GetMapping("/addresses/{id}")
+    public ResponseEntity<Address> getAddressById(@PathVariable(value = "id") Long addressId) throws ResourceNotFoundException {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found for this id :: " + addressId));
+        return ResponseEntity.ok().body(address);
+    }
+
+    @PostMapping("/addresses")
+    public Address createAddress(@Valid @RequestBody Address address) {
+        return addressRepository.save(address);
+    }
+
+
+
+    @PutMapping("/addresses/{id}")
+    public ResponseEntity<Address> updateAddress(@PathVariable(value = "id") Long addressId,
+                                                 @Valid @RequestBody Address addressDetails) throws ResourceNotFoundException {
+        System.out.println("Thread ID of controller: " + Thread.currentThread().getId());
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found for this id :: " + addressId));
+
+        address.setState(addressDetails.getState());
+        address.setStreet1(addressDetails.getStreet1());
+        address.setStreet2(addressDetails.getStreet2());
+        address.setCity(addressDetails.getCity());
+        address.setZip(addressDetails.getZip());
+
+        address = addressRepository.save(address);
+        return ResponseEntity.ok(address);
+    }
+}
