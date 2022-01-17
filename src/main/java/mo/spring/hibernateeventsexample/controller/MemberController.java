@@ -7,6 +7,7 @@ import mo.spring.hibernateeventsexample.repository.AddressRepository;
 import mo.spring.hibernateeventsexample.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,5 +74,14 @@ MemberController {
         final Member updatedMember = memberRepository.save(member);
 
         return ResponseEntity.ok(updatedMember);
+    }
+
+    @DeleteMapping("/members/{id}")
+    public ResponseEntity<String> removeMember(@PathVariable(value = "id") Long memberId){
+        if(memberRepository.existsById(memberId)){
+            memberRepository.deleteById(memberId);
+            return ResponseEntity.ok("Deleted");
+        }
+        return ResponseEntity.ok("Not exist");
     }
 }
