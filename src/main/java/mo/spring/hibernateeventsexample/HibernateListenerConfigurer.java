@@ -1,5 +1,6 @@
 package mo.spring.hibernateeventsexample;
 
+import mo.spring.hibernateeventsexample.listener.DeleteListener;
 import mo.spring.hibernateeventsexample.listener.InsertListener;
 import mo.spring.hibernateeventsexample.listener.UpdateListener;
 import org.hibernate.event.service.spi.EventListenerRegistry;
@@ -20,11 +21,13 @@ public class HibernateListenerConfigurer {
 
     private final UpdateListener updateListener;
     private final InsertListener insertListener;
+    private final DeleteListener deleteListener;
 
     @Autowired
-    public HibernateListenerConfigurer(UpdateListener updateListener, InsertListener insertListener) {
+    public HibernateListenerConfigurer(UpdateListener updateListener, InsertListener insertListener, DeleteListener deleteListener) {
         this.updateListener = updateListener;
         this.insertListener = insertListener;
+        this.deleteListener = deleteListener;
     }
 
     @PostConstruct
@@ -33,5 +36,6 @@ public class HibernateListenerConfigurer {
         EventListenerRegistry registry = sessionFactory.getServiceRegistry().getService(EventListenerRegistry.class);
         registry.getEventListenerGroup(EventType.POST_UPDATE).appendListener(updateListener);
         registry.getEventListenerGroup(EventType.POST_INSERT).appendListener(insertListener);
+        registry.getEventListenerGroup(EventType.POST_DELETE).appendListener(deleteListener);
     }
 }
