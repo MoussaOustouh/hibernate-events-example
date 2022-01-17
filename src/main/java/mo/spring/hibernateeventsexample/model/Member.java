@@ -1,5 +1,6 @@
 package mo.spring.hibernateeventsexample.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,7 +58,7 @@ public class Member {
         this.emailId = emailId;
     }
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     public Set<Address> getAddresses() {
         return addresses;
     }

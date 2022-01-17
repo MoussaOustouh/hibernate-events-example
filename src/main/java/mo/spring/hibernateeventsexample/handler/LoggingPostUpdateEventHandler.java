@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class LoggingPostUpdateEventHandler extends AbstractPostUpdateEventHandler {
     @Override
     public void run() {
-        System.out.println("------HIBERNATE EVENT------");
+        System.out.println("------HIBERNATE PostUpdate EVENT------");
         System.out.println("Thread ID of event listener: " + Thread.currentThread().getId());
 
         StringBuilder sb = new StringBuilder();
